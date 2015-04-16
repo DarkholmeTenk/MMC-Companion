@@ -1,0 +1,17 @@
+apply plugin: 'java'
+
+sourceSets {
+	main {
+		java {
+			srcDir 'src'
+		}
+		resources {
+		}
+	}
+}
+
+jar {
+	manifest {
+		attributes 'Main-Class': 'io.darkcraft.multimccompanion.Main'
+	}
+}
