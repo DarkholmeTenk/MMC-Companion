@@ -18,6 +18,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
@@ -34,6 +35,7 @@ public class MainWindow extends JFrame implements ActionListener, ListSelectionL
 	JButton						updButton;
 	JButton						remButton;
 	JList						list;
+	JLabel						folderText;
 
 	DarkcraftInstance			inst				= null;
 
@@ -63,6 +65,16 @@ public class MainWindow extends JFrame implements ActionListener, ListSelectionL
 		newButtonConstraints.gridy = 0;
 		getContentPane().add(newButton, newButtonConstraints);
 
+		folderText = new JLabel("");
+		GridBagConstraints labelConstraints = new GridBagConstraints();
+		labelConstraints.gridwidth = 3;
+		labelConstraints.insets = new Insets(0, 0, 5, 0);
+		labelConstraints.gridheight = 1;
+		labelConstraints.fill = GridBagConstraints.BOTH;
+		labelConstraints.gridx = 0;
+		labelConstraints.gridy = 1;
+		getContentPane().add(folderText, labelConstraints);
+
 		list = new JList();
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL);
@@ -74,7 +86,7 @@ public class MainWindow extends JFrame implements ActionListener, ListSelectionL
 		listConstraints.gridheight = 2;
 		listConstraints.fill = GridBagConstraints.BOTH;
 		listConstraints.gridx = 0;
-		listConstraints.gridy = 1;
+		listConstraints.gridy = 2;
 		getContentPane().add(list, listConstraints);
 
 		updButton = new JButton("Update");
@@ -82,7 +94,7 @@ public class MainWindow extends JFrame implements ActionListener, ListSelectionL
 		GridBagConstraints updButtonConstraints = new GridBagConstraints();
 		updButtonConstraints.insets = new Insets(0, 0, 0, 5);
 		updButtonConstraints.gridx = 0;
-		updButtonConstraints.gridy = 3;
+		updButtonConstraints.gridy = 4;
 		getContentPane().add(updButton, updButtonConstraints);
 
 		remButton = new JButton("Delete");
@@ -90,7 +102,7 @@ public class MainWindow extends JFrame implements ActionListener, ListSelectionL
 		GridBagConstraints remButtonConstraints = new GridBagConstraints();
 		remButtonConstraints.insets = new Insets(0, 0, 0, 5);
 		remButtonConstraints.gridx = 1;
-		remButtonConstraints.gridy = 3;
+		remButtonConstraints.gridy = 4;
 		getContentPane().add(remButton, remButtonConstraints);
 		init();
 		pack();
@@ -104,6 +116,7 @@ public class MainWindow extends JFrame implements ActionListener, ListSelectionL
 	{
 		updButton.setEnabled(false);
 		remButton.setEnabled(false);
+		folderText.setText("Current: " + Main.instanceLocation.toString());
 		instanceMap.clear();
 		DefaultListModel listModel = new DefaultListModel();
 		File[] children = Main.instanceLocation.listFiles();
