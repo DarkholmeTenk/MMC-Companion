@@ -1,26 +1,24 @@
 package io.darkcraft.multimccompanion.logic;
 
+import io.darkcraft.multimccompanion.Main;
+import io.darkcraft.multimccompanion.workers.DownloadSwingWorker;
+
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-
-import io.darkcraft.multimccompanion.Main;
 
 public class Network
 {
 	public volatile static long length = 0;
 	public volatile static long done = 0;
-	
+
 	private static String[] addArg(String arg, String... old)
 	{
-		if (old == null || old.length == 0)
+		if ((old == null) || (old.length == 0))
 			return new String[] { arg };
 		String[] newArray = new String[old.length + 1];
 		newArray[0] = arg;
@@ -33,7 +31,7 @@ public class Network
 
 	public static String buildOptions(String... options)
 	{
-		if (options == null || options.length == 0)
+		if ((options == null) || (options.length == 0))
 			return "";
 		StringBuilder built = new StringBuilder("?").append(options[0]);
 		for (int i = 1; i < options.length; i++)
@@ -90,7 +88,7 @@ public class Network
 	{
 		return getData(function, addArg("a=" + user, options));
 	}
-	
+
 	public static File getFile(URL url)
 	{
 		if(!Main.cacheLocation.isDirectory())
@@ -100,7 +98,7 @@ public class Network
 		File currentFile = new File(Main.cacheLocation,name);
 		if(currentFile.exists())
 			return currentFile;
-		InputStream is = null;
+		/*InputStream is = null;
 	    FileOutputStream fos = null;
 
 		try
@@ -157,6 +155,17 @@ public class Network
 			}
 			done = 0;
 			length = 0;
+		}*/
+		try
+		{
+			DownloadSwingWorker dsw = new DownloadSwingWorker(currentFile,url,name);
+			//ProgressDialog mon = new ProgressDialog(dsw, MainWindow.i, "Downloading " + name, 0, (int)dsw.length,"progress");
+			dsw.execute();
+			dsw.get();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
 		}
 		return currentFile;
 	}

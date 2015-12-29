@@ -7,29 +7,27 @@ import io.darkcraft.multimccompanion.logic.Modpack;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Set;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import java.awt.Insets;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Set;
-
 public class MainWindow extends JFrame implements ActionListener, ListSelectionListener
 {
 	private static final long	serialVersionUID	= 1561840731281002320L;
+	public static MainWindow i;
 
 	JButton						setButton;
 	JButton						newButton;
@@ -41,6 +39,7 @@ public class MainWindow extends JFrame implements ActionListener, ListSelectionL
 
 	public MainWindow()
 	{
+		i = this;
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0, 0, 0, 0 };
@@ -48,7 +47,7 @@ public class MainWindow extends JFrame implements ActionListener, ListSelectionL
 		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
 		getContentPane().setLayout(gridBagLayout);
 
-		setButton = new JButton("Set Instance Folder");
+		setButton = new JButton("Select MultiMC Instance Folder");
 		setButton.addActionListener(this);
 		GridBagConstraints setButtonConstraints = new GridBagConstraints();
 		setButtonConstraints.insets = new Insets(0, 0, 5, 5);
@@ -85,7 +84,7 @@ public class MainWindow extends JFrame implements ActionListener, ListSelectionL
 		updButtonConstraints.gridx = 0;
 		updButtonConstraints.gridy = 3;
 		getContentPane().add(updButton, updButtonConstraints);
-		
+
 		remButton = new JButton("Delete");
 		remButton.addActionListener(this);
 		GridBagConstraints remButtonConstraints = new GridBagConstraints();
@@ -130,28 +129,49 @@ public class MainWindow extends JFrame implements ActionListener, ListSelectionL
 		list.setModel(listModel);
 	}
 
+	private boolean mmcFileExist(File dir)
+	{
+		String[] possibilities = new String[]{"MultiMC.exe","multimc.exe","MultiMC","multimc","multiMC","Multimc"};
+		for(String s : possibilities)
+		{
+			File mmc = new File(dir,s);
+			if(mmc.exists()) return true;
+		}
+		return false;
+	}
+
+	private File isValidMultiMCFolder(File f)
+	{
+		if(mmcFileExist(f)) return new File(f,"instances/");
+		if(mmcFileExist(f.getParentFile())) return f;
+		JOptionPane.showMessageDialog(this, "MultiMC was not detected");
+		return f;
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e)
 	{
 		Object o = e.getSource();
 		if (o == setButton)
 		{
-			JFileChooser chooser = new JFileChooser();
+			JFileChooser chooser = new JFileChooser(Main.instanceLocation);
+			chooser.setToolTipText("Select MultiMC's instances folder");
+			chooser.setName("Select MultiMC instances folder");
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int result = chooser.showOpenDialog(this);
-			if (result == chooser.APPROVE_OPTION)
+			if (result == JFileChooser.APPROVE_OPTION)
 			{
-				Main.instanceLocation = chooser.getSelectedFile();
+				File f = isValidMultiMCFolder(chooser.getSelectedFile());
+				Main.instanceLocation = f;
 				Main.saveConfig();
 				init();
 			}
 		}
 		else if (o == updButton)
 		{
-			if (inst != null && inst.ood())
+			if ((inst != null) && inst.ood())
 			{
 				inst.update();
-				init();
 			}
 		}
 		else if (o == newButton)
@@ -166,17 +186,16 @@ public class MainWindow extends JFrame implements ActionListener, ListSelectionL
 			if(pack == null)
 				return;
 			File installFolder = null;
-			while (installFolder == null || installFolder.exists())
+			while ((installFolder == null) || installFolder.exists())
 			{
 				String installFolderStr = (String) JOptionPane.showInputDialog(this,
-						"Where would you like to install the modpack?", "Modpack folder", JOptionPane.PLAIN_MESSAGE, null,
+						"What name would you like for the folder this is installed into?", "Modpack folder", JOptionPane.PLAIN_MESSAGE, null,
 						null, null);
 				if(installFolderStr == null)
 					return;
 				installFolder = new File(Main.instanceLocation, installFolderStr);
 			}
 			pack.install(installFolder);
-			init();
 		}
 		else if (o == remButton)
 		{
@@ -193,7 +212,7 @@ public class MainWindow extends JFrame implements ActionListener, ListSelectionL
 					init();
 				}
 			}
-				
+
 		}
 	}
 

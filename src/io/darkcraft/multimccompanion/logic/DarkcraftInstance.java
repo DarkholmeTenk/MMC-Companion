@@ -1,11 +1,13 @@
 package io.darkcraft.multimccompanion.logic;
 
+import io.darkcraft.multimccompanion.ui.MainWindow;
+import io.darkcraft.multimccompanion.workers.ModpackInstanceUpdateSwingWorker;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
 
 public class DarkcraftInstance
 {
@@ -67,7 +69,7 @@ public class DarkcraftInstance
 		else
 			throw new InstantiationException("Instance folder does not exist");
 	}
-	
+
 	public DarkcraftInstance(File installLocation, Modpack installModpack)
 	{
 		location = installLocation;
@@ -75,24 +77,24 @@ public class DarkcraftInstance
 		version = installModpack.getMostRecentVersion();
 		write();
 	}
-	
+
 	public int getVersion()
 	{
 		return version;
 	}
-	
+
 	public Modpack getModpack()
 	{
 		return modpack;
 	}
-	
+
 	public void update()
 	{
 		if(version == modpack.getMostRecentVersion())
 			return;
 		String data = Network.getData("mpc", "i="+modpack.modpackID, "o="+version);
 		String[] dataArray = data.split(",");
-		try
+		/*try
 		{
 			URL url = new URL(dataArray[0].trim().replaceAll(" ", "%20"));
 			ZipHandler.unzip(Network.getFile(url), location);
@@ -106,11 +108,18 @@ public class DarkcraftInstance
 		catch(Exception e)
 		{
 			e.printStackTrace();
-		}
+		}*/
+		ModpackInstanceUpdateSwingWorker sw = new ModpackInstanceUpdateSwingWorker(this, location, dataArray);
+		sw.execute();
+	}
+
+	public void finishUpdating()
+	{
 		version = modpack.getMostRecentVersion();
 		write();
+		MainWindow.i.init();
 	}
-	
+
 	private void write()
 	{
 		File darkcraftFile = new File(location, "dc.dat");
@@ -134,12 +143,12 @@ public class DarkcraftInstance
 	{
 		return location.toString().replaceAll(".*/", "");
 	}
-	
+
 	public boolean ood()
 	{
 		return version < modpack.getMostRecentVersion();
 	}
-	
+
 	private void remove(File f)
 	{
 		try

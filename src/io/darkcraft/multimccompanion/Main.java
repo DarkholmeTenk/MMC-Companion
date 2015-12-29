@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.swing.JOptionPane;
+
 /**
  * @author DarkholmeTenk
  *
@@ -23,7 +25,7 @@ public class Main
 		readConfig();
 		MainWindow window = new MainWindow();
 	}
-	
+
 	private static void readConfig()
 	{
 		File config = new File("config.dat");
@@ -49,7 +51,7 @@ public class Main
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void saveConfig()
 	{
 		File config = new File("config.dat");
@@ -70,6 +72,15 @@ public class Main
 		{
 			e.printStackTrace();
 		}
+	}
+
+	public static void printException(Exception e)
+	{
+		String message = "";
+		StackTraceElement[] elements = e.getStackTrace();
+		for(StackTraceElement el : elements)
+			message += el.toString() + "\n";
+		JOptionPane.showMessageDialog(MainWindow.i, message, e.getLocalizedMessage(), JOptionPane.ERROR_MESSAGE);
 	}
 
 }

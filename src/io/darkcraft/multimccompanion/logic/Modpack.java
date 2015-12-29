@@ -1,5 +1,8 @@
 package io.darkcraft.multimccompanion.logic;
 
+import io.darkcraft.multimccompanion.ui.MainWindow;
+import io.darkcraft.multimccompanion.workers.ModpackDownloadSwingWorker;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -71,22 +74,24 @@ public class Modpack
 		}
 	}
 
-	public DarkcraftInstance install(File installLocation)
+	public void install(File installLocation)
 	{
 		try
 		{
 			String data = Network.getData("mpd", "i=" + modpackID);
 			String[] dataArray = data.split(",");
 			URL url = new URL(dataArray[0].trim().replaceAll(" ", "%20"));
-			File installableZip = Network.getFile(url);
+			/*File installableZip = Network.getFile(url);
 			ZipHandler.unzip(installableZip, installLocation);
-			return new DarkcraftInstance(installLocation, this);
+			new DarkcraftInstance(installLocation, this);*/
+			ModpackDownloadSwingWorker mdsw = new ModpackDownloadSwingWorker(url, installLocation, this);
+			mdsw.execute();
 		}
 		catch (MalformedURLException e)
 		{
 			e.printStackTrace();
 		}
-		return null;
+		MainWindow.i.init();
 	}
 
 	public static Set<Integer> getModpackIDs()
@@ -98,7 +103,7 @@ public class Modpack
 		{
 			if (datum != null)
 				datum = datum.trim();
-			if (datum == null || datum.length() == 0)
+			if ((datum == null) || (datum.length() == 0))
 				continue;
 			try
 			{
@@ -112,7 +117,7 @@ public class Modpack
 		}
 		return toReturn;
 	}
-	
+
 	public static Set<Modpack> getModpacks()
 	{
 		HashSet<Modpack> modpacks = new HashSet();
