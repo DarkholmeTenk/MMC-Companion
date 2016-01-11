@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 public class DownloadSwingWorker extends SwingWorker<Boolean,Object>
@@ -73,6 +74,7 @@ public class DownloadSwingWorker extends SwingWorker<Boolean,Object>
 			done = 0;
 			length = -1;
 			err = e.getMessage();
+			JOptionPane.showMessageDialog(pd,"Failed to download " + url.toString() + " " + err);
 			return false;
 		}
 		downloaded = true;
