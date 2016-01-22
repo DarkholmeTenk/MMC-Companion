@@ -4,8 +4,10 @@ import io.darkcraft.multimccompanion.ui.MainWindow;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import javax.swing.JOptionPane;
@@ -22,8 +24,23 @@ public class Main
 
 	public static void main(String[] args)
 	{
+		initStreamRedir();
 		readConfig();
 		MainWindow window = new MainWindow();
+	}
+
+	private static void initStreamRedir()
+	{
+		File f = new File("mmcc-err.txt");
+		try
+		{
+			if(!f.exists())
+				f.createNewFile();
+			PrintStream fos = new PrintStream(new FileOutputStream(f));
+			System.setErr(fos);
+			System.setOut(fos);
+		}
+		catch(IOException e){}
 	}
 
 	private static void readConfig()
