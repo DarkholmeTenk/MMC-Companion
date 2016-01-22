@@ -95,73 +95,17 @@ public class Network
 			Main.cacheLocation.mkdir();
 		String[] data = url.getPath().split("/");
 		String name = data[data.length-1];
+		System.out.println("Looking for " + name + " from " + url.toString());
 		File currentFile = new File(Main.cacheLocation,name);
 		if(currentFile.exists())
 			return currentFile;
-		/*InputStream is = null;
-	    FileOutputStream fos = null;
-
 		try
 		{
-			currentFile.createNewFile();
-			URLConnection urlConn = url.openConnection();// connect
-			length = urlConn.getContentLengthLong();
-			done = 0;
-			is = urlConn.getInputStream(); // get connection inputstream
-			fos = new FileOutputStream(currentFile); // open outputstream to local file
-
-			byte[] buffer = new byte[4096]; // declare 4KB buffer
-			int len;
-
-			// while we have availble data, continue downloading and storing to local file
-			while ((len = is.read(buffer)) >= 0)
-			{
-				fos.write(buffer, 0, len);
-				done += len;
-			}
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
-			try
-			{
-				if(currentFile.exists())
-					currentFile.delete();
-				return null;
-			}
-			catch(SecurityException e2)
-			{
-				e2.printStackTrace();
-			}
-			done = -1;
-			length = -1;
-		}
-		finally
-		{
-			try
-			{
-				if (is != null)
-				{
-					is.close();
-				}
-				if (fos != null)
-				{
-					fos.close();
-				}
-			}
-			catch(IOException e2)
-			{
-				e2.printStackTrace();
-			}
-			done = 0;
-			length = 0;
-		}*/
-		try
-		{
+			System.out.println("Not found: " + name + " initialising download");
 			DownloadSwingWorker dsw = new DownloadSwingWorker(currentFile,url,name);
-			//ProgressDialog mon = new ProgressDialog(dsw, MainWindow.i, "Downloading " + name, 0, (int)dsw.length,"progress");
 			dsw.execute();
 			dsw.get();
+			System.out.println("Download finished");
 		}
 		catch (Exception e)
 		{
