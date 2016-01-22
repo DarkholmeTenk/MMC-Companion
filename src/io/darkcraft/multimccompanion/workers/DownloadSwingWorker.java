@@ -30,13 +30,15 @@ public class DownloadSwingWorker extends SwingWorker<Boolean,Object>
 		url = _url;
 		urlConn = url.openConnection();// connect
 		length = (int) urlConn.getContentLengthLong();
+		System.out.println("Downloading from URL: " + url.toString());
+		System.out.println("Expected content length: " + length);
 		pd = new ProgressDialog(this, MainWindow.i,"Downloading " + n, 0, length, "progress");
 	}
 
 	@Override
 	public Boolean doInBackground() throws Exception
 	{
-
+		System.out.println("Download starting");
 		try(FileOutputStream fos = new FileOutputStream(currentFile); InputStream is = urlConn.getInputStream())
 		{
 			currentFile.createNewFile();
@@ -73,10 +75,12 @@ public class DownloadSwingWorker extends SwingWorker<Boolean,Object>
 			}
 			done = 0;
 			length = -1;
-			err = e.getMessage();
-			JOptionPane.showMessageDialog(pd,"Failed to download " + url.toString() + " " + err);
+			err = "Failed to download " + url.toString() + " " + e.getMessage();
+			System.err.println(err);
+			JOptionPane.showMessageDialog(pd,err);
 			return false;
 		}
+		System.out.println("Downloaded: " + url.toString() + " - " + done + "/" + length + " bytes");
 		downloaded = true;
 		return true;
 	}
