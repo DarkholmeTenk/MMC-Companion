@@ -81,9 +81,6 @@ public class Modpack
 			String data = Network.getData("mpd", "i=" + modpackID);
 			String[] dataArray = data.split(",");
 			URL url = new URL(dataArray[0].trim().replaceAll(" ", "%20"));
-			/*File installableZip = Network.getFile(url);
-			ZipHandler.unzip(installableZip, installLocation);
-			new DarkcraftInstance(installLocation, this);*/
 			ModpackDownloadSwingWorker mdsw = new ModpackDownloadSwingWorker(url, installLocation, this);
 			mdsw.execute();
 		}

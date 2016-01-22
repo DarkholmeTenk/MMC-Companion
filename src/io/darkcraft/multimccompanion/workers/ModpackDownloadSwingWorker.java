@@ -9,6 +9,7 @@ import io.darkcraft.multimccompanion.ui.MainWindow;
 import java.io.File;
 import java.net.URL;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 public class ModpackDownloadSwingWorker extends SwingWorker<Boolean, Object>
@@ -27,12 +28,23 @@ public class ModpackDownloadSwingWorker extends SwingWorker<Boolean, Object>
 	@Override
 	protected Boolean doInBackground() throws Exception
 	{
-		MainWindow.i.setEnabled(false);
-		File installableZip = Network.getFile(url);
-		ZipHandler.unzip(installableZip, installLocation);
-		new DarkcraftInstance(installLocation, m);
-		MainWindow.i.init();
-		return true;
+		try
+		{
+			MainWindow.i.setEnabled(false);
+			File installableZip = Network.getFile(url);
+			ZipHandler.unzip(installableZip, installLocation);
+			new DarkcraftInstance(installLocation, m);
+			MainWindow.i.init();
+			return true;
+		}
+		catch(Exception e)
+		{
+			String err = "Failed to install " + url.toString() + " - " + e.getMessage();
+			System.err.println(err);
+			JOptionPane.showMessageDialog(MainWindow.i,err);
+			e.printStackTrace();
+			throw(e);
+		}
 	}
 
 	@Override
