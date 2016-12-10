@@ -38,7 +38,13 @@ public class ProgressDialog extends JDialog implements PropertyChangeListener
 		labelConstraints.gridy = 0;
 		add(label, labelConstraints);
 
-		bar = new JProgressBar(min,max);
+		if(max == -1)
+		{
+			bar = new JProgressBar();
+			bar.setIndeterminate(true);
+		}
+		else
+			bar = new JProgressBar(min,max);
 		GridBagConstraints barConstraints = new GridBagConstraints();
 		barConstraints.gridx = 0;
 		barConstraints.gridy = 1;

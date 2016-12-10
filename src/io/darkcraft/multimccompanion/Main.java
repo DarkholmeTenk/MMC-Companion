@@ -1,7 +1,5 @@
 package io.darkcraft.multimccompanion;
 
-import io.darkcraft.multimccompanion.ui.MainWindow;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,6 +9,8 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import javax.swing.JOptionPane;
+
+import io.darkcraft.multimccompanion.ui.MainWindow;
 
 /**
  * @author DarkholmeTenk
@@ -50,12 +50,14 @@ public class Main
 		{
 			if(config.exists())
 			{
-				BufferedReader reader = new BufferedReader(new FileReader(config));
-				String line = reader.readLine();
-				if(line != null)
+				try(BufferedReader reader = new BufferedReader(new FileReader(config)))
 				{
-					String[] data = line.split(",");
-					instanceLocation = new File(data[0].trim());
+					String line = reader.readLine();
+					if(line != null)
+					{
+						String[] data = line.split(",");
+						instanceLocation = new File(data[0].trim());
+					}
 				}
 			}
 			else
